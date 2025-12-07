@@ -1,4 +1,27 @@
-import 'package:flutter/material.dart';
+# basic code for creating lost phone contact 
+import'package:flutter/material.dart';
+void main(){
+  runApp(MySecondApp());
+}
+class MySecondApp extends StatelessWidget{
+  const MySecondApp({super.key});
+  @override
+ Widget build(BuildContext context){
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+         title: const Text("If lost contact"),
+        ),
+        body: Center(
+          child: Text("Name:Farhaan Iqbal Sheriff\n Phone Number:7700056943",textAlign:TextAlign.center,style:TextStyle()),
+      ),
+      ),
+    );
+  }
+}
+# the code for performing the conditional statement for determining whether the entered number is an even or not in which we have used a text box to writing the input number and a button to perform the action or condition which ultimately result to the output
+  
+  import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
