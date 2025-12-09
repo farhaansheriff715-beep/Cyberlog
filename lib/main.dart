@@ -115,3 +115,59 @@ class _EvenOddAppState extends State<EvenOddApp> {
     );
   }
 }
+# Basic code for understanding the classes by creating a class named log with properties String action, DateTime timestamp, and String status.
+  import 'package:flutter/material.dart';
+
+// 1. Create the Log class
+class Log {
+  String action;
+  DateTime timestamp;
+  String status;
+
+  Log(this.action, this.timestamp, this.status);
+}
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // 2. Create a List<Log> with sample data
+    List<Log> logs = [
+      Log("User Logged In", DateTime.now(), "Success"),
+      Log("File Uploaded", DateTime.now().subtract(Duration(minutes: 5)), "Success"),
+      Log("Password Change Attempt", DateTime.now().subtract(Duration(hours: 1)), "Failed"),
+      Log("User Logged Out", DateTime.now().subtract(Duration(hours: 2)), "Success"),
+    ];
+
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("Log List Example"),
+        ),
+        body: Padding(
+          padding: EdgeInsets.all(16.0),
+
+          // 3. Use map() to generate a widget for each Log
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: logs.map((log) {
+              // Format the timestamp (very simple format)
+              String formattedTime =
+                  "${log.timestamp.hour}:${log.timestamp.minute.toString().padLeft(2, '0')}";
+
+              // 4. Return a Text widget for each log
+              return Text(
+                "${log.action} - $formattedTime (${log.status})",
+                style: TextStyle(fontSize: 18),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
