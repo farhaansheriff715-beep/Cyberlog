@@ -1,5 +1,5 @@
-The session 5 Assignment Givem to us about where we have to use gridview meaning out home screen should have two grid view and also used cards for data as well as the container Widget
-import 'package:flutter/material.dart'; 
+# This is the code releated to the topic navigation bar that we learned during our session six which contsains three pages namely Home,logs and settings
+import 'package:flutter/material.dart';
 
 void main() {
   runApp(MyApp());
@@ -9,63 +9,145 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeScreen(),
+      debugShowCheckedModeBanner: false,
+      home: MainScreen(),
     );
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
+  @override
+  _MainScreenState createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  int selectedIndex = 0;
+
+  void onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        title: Text("My Beginner App"),
+        backgroundColor: Colors.blue,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: GridView.count(
-          crossAxisCount: 2,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.blue[200],
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Center(
-                child: Text('Daily Log', style: TextStyle(fontSize: 18)),
-              ),
+      body: getPage(),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: selectedIndex,
+        onTap: onItemTapped,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: "Logs",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: "Settings",
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getPage() {
+    if (selectedIndex == 0) {
+      return HomePage();
+    } else if (selectedIndex == 1) {
+      return LogsPage();
+    } else {
+      return SettingsPage();
+    }
+  }
+}
+
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Card(
+            child: ListTile(
+              leading: Icon(Icons.home, color: Colors.blue),
+              title: Text("Welcome"),
+              subtitle: Text("This is the home page"),
             ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.green[200],
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Center(
-                child: Text('Cyber Tips', style: TextStyle(fontSize: 18)),
-              ),
+          ),
+          SizedBox(height: 10),
+          Card(
+            child: ListTile(
+              leading: Icon(Icons.info, color: Colors.green),
+              title: Text("Info"),
+              subtitle: Text("Use the bottom menu to navigate"),
             ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.orange[200],
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Center(
-                child: Text('Device Security', style: TextStyle(fontSize: 18)),
-              ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class LogsPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Card(
+            child: ListTile(
+              leading: Icon(Icons.list),
+              title: Text("Logs"),
+              subtitle: Text("Your logs will appear here"),
             ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.purple[200],
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Center(
-                child: Text('Notes', style: TextStyle(fontSize: 18)),
-              ),
+          ),
+          SizedBox(height: 10),
+          Card(
+            child: ListTile(
+              leading: Icon(Icons.history),
+              title: Text("History"),
+              subtitle: Text("No history yet"),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SettingsPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Card(
+            child: ListTile(
+              leading: Icon(Icons.person),
+              title: Text("Profile"),
+              subtitle: Text("Edit your profile"),
+            ),
+          ),
+          SizedBox(height: 10),
+          Card(
+            child: ListTile(
+              leading: Icon(Icons.settings),
+              title: Text("App Settings"),
+              subtitle: Text("Change app preferences"),
+            ),
+          ),
+        ],
       ),
     );
   }
