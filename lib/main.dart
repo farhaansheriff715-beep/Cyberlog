@@ -1,4 +1,4 @@
-# session 7 code where i have done the userlogs part where  a user logs in and its log history is displayed to be preciese the duration at which it has logged in 
+# session 7 code where i have done the userlogs part where  a user logs in and its log history is displayed to be preciese the duration at which it has logged in I have also created a file and imported it in the same main.dart which i have displayed below the main.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'user_provider.dart';
@@ -169,3 +169,30 @@ class LoggedInView extends StatelessWidget {
     );
   }
 }
+/// this is the imported code
+import 'package:flutter/material.dart';
+
+class UserProvider extends ChangeNotifier {
+  bool _isLoggedIn = false;
+  String _username = '';
+  final List<String> _loginLogs = [];
+
+  bool get isLoggedIn => _isLoggedIn;
+  String get username => _username;
+  List<String> get loginLogs => _loginLogs;
+
+  void login(String name) {
+    _isLoggedIn = true;
+    _username = name;
+    _loginLogs.add(
+        "${DateTime.now().toLocal()} - $name logged in"); // Add log entry
+    notifyListeners();
+  }
+
+  void logout() {
+    _isLoggedIn = false;
+    _username = '';
+    notifyListeners();
+  }
+}
+
