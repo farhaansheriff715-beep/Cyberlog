@@ -1,79 +1,116 @@
-# session 9 portfolio assignment of ours 
+# session 10 portfolio assignment of ours 
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: PermissionDemo(),
+    );
+  }
 }
 
-class _MyAppState extends State<MyApp> {
-  bool isDarkMode = false;
-  bool notificationsEnabled = false;
+class PermissionDemo extends StatefulWidget {
+  const PermissionDemo({super.key});
 
   @override
-  void initState() {
-    super.initState();
-    loadSettings();
+  State<PermissionDemo> createState() => _PermissionDemoState();
+}
+
+class _PermissionDemoState extends State<PermissionDemo> {
+  File? imageFile;
+  String apiResult = "No data fetched";
+
+  final ImagePicker picker = ImagePicker();
+
+
+  Future<void> captureImage() async {
+    final cameraStatus = await Permission.camera.request();
+    final storageStatus = await Permission.storage.request();
+
+    if (cameraStatus.isGranted && storageStatus.isGranted) {
+      final XFile? photo =
+      await picker.pickImage(source: ImageSource.camera);
+
+      if (photo != null) {
+        setState(() {
+          imageFile = File(photo.path);
+        });
+      }
+    } else {
+      showMessage("Camera or Storage permission denied");
+    }
   }
 
-  // Load saved settings
-  Future<void> loadSettings() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isDarkMode = prefs.getBool('darkMode') ?? false;
-      notificationsEnabled = prefs.getBool('notifications') ?? false;
-    });
+
+  Future<void> fetchData() async {
+    final response = await http
+        .get(Uri.parse("https://jsonplaceholder.typicode.com/posts/1"));
+
+    if (response.statusCode == 200) {
+      setState(() {
+        apiResult = "Internet Access Successful ✔";
+      });
+    } else {
+      setState(() {
+        apiResult = "Failed to fetch data";
+      });
+    }
   }
 
-  // Save Dark Mode setting
-  Future<void> saveDarkMode(bool value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('darkMode', value);
-    setState(() {
-      isDarkMode = value;
-    });
-  }
-
-  // Save Notification setting
-  Future<void> saveNotifications(bool value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('notifications', value);
-    setState(() {
-      notificationsEnabled = value;
-    });
+  void showMessage(String msg) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(msg)));
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('App Settings'),
-        ),
-        body: Column(
-          children: [
-            SwitchListTile(
-              title: const Text('Dark Mode'),
-              value: isDarkMode,
-              onChanged: saveDarkMode,
-            ),
-            SwitchListTile(
-              title: const Text('Enable Notifications'),
-              value: notificationsEnabled,
-              onChanged: saveNotifications,
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(title: const Text("Permission Based Features")),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              imageFile != null
+                  ? Image.file(imageFile!, height: 200)
+                  : const Text("No image captured"),
+
+              const SizedBox(height: 20),
+
+              ElevatedButton(
+                onPressed: captureImage,
+                child: const Text("Camera + Storage"),
+              ),
+
+              const SizedBox(height: 20),
+
+              ElevatedButton(
+                onPressed: fetchData,
+                child: const Text("Internet Permission"),
+              ),
+
+              const SizedBox(height: 20),
+
+              Text(apiResult,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16)),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
