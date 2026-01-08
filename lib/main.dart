@@ -1,116 +1,59 @@
-# session 10 portfolio assignment of ours 
-import 'dart:io';
+# session 11 portfolio assignment of ours 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:http/http.dart' as http;
+import 'settings.dart.';
 
 void main() {
   runApp(const MyApp());
 }
 
+/// Root of the application
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: PermissionDemo(),
+      title: 'Flutter Internship App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const HomePage(),
     );
   }
 }
 
-class PermissionDemo extends StatefulWidget {
-  const PermissionDemo({super.key});
-
-  @override
-  State<PermissionDemo> createState() => _PermissionDemoState();
-}
-
-class _PermissionDemoState extends State<PermissionDemo> {
-  File? imageFile;
-  String apiResult = "No data fetched";
-
-  final ImagePicker picker = ImagePicker();
-
-
-  Future<void> captureImage() async {
-    final cameraStatus = await Permission.camera.request();
-    final storageStatus = await Permission.storage.request();
-
-    if (cameraStatus.isGranted && storageStatus.isGranted) {
-      final XFile? photo =
-      await picker.pickImage(source: ImageSource.camera);
-
-      if (photo != null) {
-        setState(() {
-          imageFile = File(photo.path);
-        });
-      }
-    } else {
-      showMessage("Camera or Storage permission denied");
-    }
-  }
-
-
-  Future<void> fetchData() async {
-    final response = await http
-        .get(Uri.parse("https://jsonplaceholder.typicode.com/posts/1"));
-
-    if (response.statusCode == 200) {
-      setState(() {
-        apiResult = "Internet Access Successful ✔";
-      });
-    } else {
-      setState(() {
-        apiResult = "Failed to fetch data";
-      });
-    }
-  }
-
-  void showMessage(String msg) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(msg)));
-  }
+/// Simple home screen with navigation to Settings
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Permission Based Features")),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              imageFile != null
-                  ? Image.file(imageFile!, height: 200)
-                  : const Text("No image captured"),
-
-              const SizedBox(height: 20),
-
-              ElevatedButton(
-                onPressed: captureImage,
-                child: const Text("Camera + Storage"),
-              ),
-
-              const SizedBox(height: 20),
-
-              ElevatedButton(
-                onPressed: fetchData,
-                child: const Text("Internet Permission"),
-              ),
-
-              const SizedBox(height: 20),
-
-              Text(apiResult,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16)),
-            ],
+      appBar: AppBar(
+        title: const Text('Home'),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: ElevatedButton.icon(
+          icon: const Icon(Icons.settings),
+          label: const Text('Open Settings'),
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24,
+              vertical: 14,
+            ),
           ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const SettingsPage(),
+              ),
+            );
+          },
         ),
       ),
     );
   }
 }
-
